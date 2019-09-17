@@ -28,8 +28,6 @@ def downloadData(url):
 
     response = request.urlopen(url)
     return response.read().decode('utf-8').splitlines()
-    # return urllib2.urlopen(url)
-
 
 def processData(data):
     """Processes data from the contents of a CSV file line by line.
