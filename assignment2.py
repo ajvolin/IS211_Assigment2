@@ -10,7 +10,8 @@ import sys
 import argparse
 import datetime
 import logging
-import urllib2
+import urllib.request as request
+import urllib.error
 import csv
 
 
@@ -25,7 +26,9 @@ def downloadData(url):
             'https://s3.amazonaws.com/cuny-is211-spring2015/birthdays100.csv')
     """
 
-    return urllib2.urlopen(url)
+    response = request.urlopen(url)
+    return response.read().decode('utf-8').splitlines()
+    # return urllib2.urlopen(url)
 
 
 def processData(data):
@@ -72,11 +75,11 @@ def displayPerson(id, personData):
     id = str(id)
 
     if id not in personData.keys():
-        print 'No user found with that id'
+        print('No user found with that id')
     else:
-        print 'Person #{} is {} with a birthday of {}'.format(id,
+        print('Person #{} is {} with a birthday of {}'.format(id,
                 personData[id][0], personData[id][1].strftime('%Y-%m-%d'
-                ))
+                )))
 
 
 def main():
@@ -92,25 +95,25 @@ def main():
     if args.url:
         try:
             csvData = downloadData(args.url)
-        except (urllib2.URLError, urllib2.HTTPError):
-            print 'There was an error retrieving the data from the provided URL. Please try a different URL.'
+        except (urllib.error.URLError, urllib.error.HTTPError):
+            print('There was an error retrieving the data from the provided URL. Please try a different URL.')
             sys.exit()
 
         personData = processData(csvData)
 
         try:
-            id = int(raw_input('Enter a user ID: '))
+            id = int(input('Enter a user ID: '))
             if id <= 0:
-                print 'Received entry of a number <= 0. Exiting program.'
+                print('Received entry of a number <= 0. Exiting program.')
                 sys.exit()
             else:
                 displayPerson(id, personData)
                 main()
         except ValueError:
-            print 'Please enter a valid numerical user ID'
+            print('Please enter a valid numerical user ID')
             main()
     else:
-        print 'The --url parameter is required.'
+        print('The --url parameter is required.')
         sys.exit()
 
 
